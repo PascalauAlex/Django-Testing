@@ -73,6 +73,8 @@ WSGI_APPLICATION = 'testing_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+
+# Tests in Django creates a new test database appending to 'NAME' : 'test'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

@@ -5,8 +5,9 @@ from django.db import IntegrityError
 
 class ProductModelTest(TestCase):
 
-    def setUp(self) -> None:
-        self.product = Product(name="Test Product", price=100.00, stock_count = 10)
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.product = Product(name="Test Product", price=100.00, stock_count = 10)
 
     def test_in_stock_property(self):
         self.assertTrue(self.product.in_stock)
@@ -15,7 +16,6 @@ class ProductModelTest(TestCase):
         self.assertFalse(self.product.in_stock)
 
     def test_discount_price(self):
-
         self.assertEqual(self.product.get_discounted_price(discount_percentage=10), 90)
         self.assertEqual(self.product.get_discounted_price(discount_percentage=50), 50)
         self.assertEqual(self.product.get_discounted_price(discount_percentage=100), 0)

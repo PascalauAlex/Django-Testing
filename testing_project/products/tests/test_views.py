@@ -1,4 +1,4 @@
-from products.models import Product
+from products.models import Product, User
 from django.test import TestCase, SimpleTestCase
 from django.urls import reverse
 
@@ -38,3 +38,25 @@ class TestProductsPage(TestCase):
         self.assertNotContains(response=response, text="Laptop")
         self.assertNotContains(response=response, text="Phone")
         self.assertEqual(len(response.context['products']), 0)
+
+class TestProfilePage(TestCase):
+
+    def test_profile_view_not_accessible_for_unauthenticated_users(self):
+        response = self.client.get(reverse('profile'))
+        # If not authenticated the user will be redirected to '/login/?next=/profile', so we can't access contains
+        # The response contains data loaded only for the profile page, but since we got redirected, the page is empty
+        print(f'Response content: ',response.content) # Empty page
+        self.assertRedirects(response,expected_url=f"{reverse('login')}?next={reverse('profile')}")
+
+
+    def test_profile_view_accessible_for_authenticated_users(self):
+        # Create a test user
+        user = User.objects.create(username="test_user", password="password123")
+
+        # Log the user in
+        self.client.force_login(user=user)
+        response = self.client.get(reverse('profile'))
+
+        #Check if the user username is into the response content
+        self.assertContains(response=response, text="test_user")
+

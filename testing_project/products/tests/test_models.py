@@ -21,18 +21,6 @@ class ProductModelTest(TestCase):
         self.assertEqual(self.product.get_discounted_price(discount_percentage=100), 0)
         self.assertEqual(self.product.get_discounted_price(discount_percentage=0),100)
 
-    def test_negative_price_validation(self):
-        self.product.price = -10
-        # Context manager
-        with self.assertRaises(expected_exception=ValidationError):
-            self.product.clean()
-
-    def test_negative_stock_validation(self):
-        self.product.stock_count = -10
-        # Context manager
-        with self.assertRaises(expected_exception=ValidationError):
-            self.product.clean()
-
     def test_negative_price_constraint(self):
         """ Test a product with negative price cannot be saved due to database constraint """
         product = Product(name="Negative price product", price=-5, stock_count=10)

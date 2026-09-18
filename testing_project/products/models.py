@@ -14,6 +14,10 @@ class Product(models.Model):
     stock_count = models.IntegerField(default=0)
 
     class Meta:
+        """
+            Model constraint throws an IntegrityError
+            if the model is created without respecting the constraints
+        """
         constraints =[
             models.CheckConstraint(
                 condition=models.Q(price__gt=0),
@@ -25,11 +29,6 @@ class Product(models.Model):
             )
         ]
 
-    def clean(self):
-        if self.price < 0:
-            raise ValidationError(message="The price cannot be negative.")
-        if self.stock_count < 0:
-            raise ValidationError(message="The stock_count cannot be negative.")
 
     @property
     def in_stock(self) -> bool:

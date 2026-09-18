@@ -1,6 +1,42 @@
 from products.models import Product, User
 from django.test import TestCase, SimpleTestCase
 from django.urls import reverse
+from unittest.mock import patch, MagicMock
+import requests
+
+class PostViewTest(TestCase):
+    @patch('products.views.requests.get') # We either get a AsyncMock either a MagicMock obj
+    def test_view_success(self, mock_get : MagicMock):
+        """ Simulate the actual data , status code , etc.,
+            that is provided by the external service"""
+
+        mock_get.return_value.status_code = 200
+        return_data = {
+            "userId":1,
+            "id":1,
+            "title":"Test Title",
+            "body":"Test Body"
+        }
+        mock_get.return_value.json.return_value = return_data
+        response = self.client.get(reverse('post'))
+        self.assertEqual(response.status_code,200)
+        self.assertJSONEqual(response.content,return_data)
+
+        # Ensure that the mock API call was made once with the correct URL
+        mock_get.assert_called_once_with('https://jsonplaceholder.typicode.com/posts/1')
+
+
+    @patch('products.views.requests.get')
+    def test_post_view_fail(self,mock_get: MagicMock):
+        """ Test that the posts view returns a 503 on HTTP errors. """
+        mock_get.side_effect = requests.exceptions.RequestException
+
+        # Send a request to the view
+        response = self.client.get(reverse('post'))
+        # Check that the view returns a 503 Service Unavailable status code
+        self.assertEqual(response.status_code,503)
+        mock_get.assert_called_once_with('https://jsonplaceholder.typicode.com/posts/1')
+
 
 # SimpleTest don't touch the database -> better performance
 class TestHomePage(SimpleTestCase):

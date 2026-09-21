@@ -1,5 +1,5 @@
 from products.models import Product, User
-from django.test import TestCase, SimpleTestCase
+from django.test import TestCase, SimpleTestCase, tag
 from django.urls import reverse
 from unittest.mock import patch, MagicMock
 import requests
@@ -85,7 +85,7 @@ class TestProfilePage(TestCase):
         print(f'Response content: ',response.content) # Empty page
         self.assertRedirects(response,expected_url=f"{reverse('login')}?next={reverse('profile')}")
 
-
+    @tag("auth")
     def test_profile_view_accessible_for_authenticated_users(self):
         # Create a test user
         user = User.objects.create(username="test_user", password="password123")

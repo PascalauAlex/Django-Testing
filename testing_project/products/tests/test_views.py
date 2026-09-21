@@ -4,6 +4,7 @@ from django.urls import reverse
 from unittest.mock import patch, MagicMock
 import requests
 
+
 class PostViewTest(TestCase):
     @patch('products.views.requests.get') # We either get a AsyncMock either a MagicMock obj
     def test_view_success(self, mock_get : MagicMock):
